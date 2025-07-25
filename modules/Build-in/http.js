@@ -15,24 +15,79 @@
 //? 3) assign a port number to the server, through which we can send responses and accept requests using listen()
 
 const http = require("http");
+const path = require("path");
+const fs = require("fs");
 // console.log(http);
 
-let server = http.createServer((req, res) => {
+/* let server = http.createServer((req, res) => {
   //~ if you want to display anything on the UI (user interface)
-  res.write("message from write()!!!!!!");
+  // res.write("message from write()!!!!!!");
   //~ this will terminate the current req-res cycle
-  res.end();
-
+  // res.end();
+  // res.end("this is from end()");
+  // console.log("hi");
+  // console.log(req); // req.body, req.status(), req.headers(), etc...
+  // console.log(res);
+  // res.end();
   //   res.write("hiii"); // this will give error;
+  // console.log("url:" + req.url);
+  // console.log("method:", req.method);
+  // console.log(res.getHeader());
+  // res.end();
 });
 
-server.listen(9000, (err) => {
-  if (err) console.log(err);
-  console.log("server running at port 9000");
-});
+server.listen(9000); */
 
 //! how to tap into server
 // open browser and type "localhost:PORT_NUMBER"
 //! to exit or to close the server
 // press ctrl + c on terminal
 //! after each modification, restart the server
+
+//? node --watch filename
+
+//? "/about", "/download", "/blogs" ==> endpoints
+// https://nodejs.org/en/
+
+//? routing ==> handling user's multiple requests
+
+let server = http.createServer((req, res) => {
+  //! before sending res, we have to set the headers also, so that browser can use this information to render data
+  //! to set headers, use
+  //? writeHead(statusCode, "statusMessage", {"content-type":"value"})
+  //~ ============================= sending html response ==============================
+  // res.writeHead(200, { "Content-Type": "text/html" });
+  // let filePath = path.join(__dirname, "..", "..", "..", "Public", "Pages", "index.html");
+  // let readContents = fs.readFileSync(filePath, "utf-8");
+  // res.end(readContents);
+  //~ ============================= sending json response ==============================
+  res.writeHead(200, { "Content-Type": "application/json" });
+  let filePath = path.join(
+    __dirname,
+    "..",
+    "..",
+    "..",
+    "Public",
+    "Pages",
+    "data.json"
+  );
+  res.end(fs.readFileSync(filePath, "utf-8"));
+});
+
+//? writeHead(statusCode, "statusMessage", {"Content-Type":"value"})
+// statusCode ==> in total 5 series
+//1) 1XX ==> informational
+//2) 2XX ==> success
+//3) 3XX ==> redirection
+//4) 4XX ==> client side error
+//5) 5XX ==> server side error
+
+//! if you want to send html response ==> value: "text/html"
+//! if you want to send css response ==> value: "text/css"
+//! if you want to send javascript response ==> value: "application/js"
+//! if you want to send json data ==> value: "application/json"
+
+server.listen(9000, (err) => {
+  if (err) console.log(err);
+  console.log("server running at port 90000");
+});
