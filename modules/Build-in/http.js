@@ -51,7 +51,7 @@ server.listen(9000); */
 
 //? routing ==> handling user's multiple requests
 
-let server = http.createServer((req, res) => {
+/* let server = http.createServer((req, res) => {
   //! before sending res, we have to set the headers also, so that browser can use this information to render data
   //! to set headers, use
   //? writeHead(statusCode, "statusMessage", {"content-type":"value"})
@@ -61,18 +61,16 @@ let server = http.createServer((req, res) => {
   // let readContents = fs.readFileSync(filePath, "utf-8");
   // res.end(readContents);
   //~ ============================= sending json response ==============================
-  res.writeHead(200, { "Content-Type": "application/json" });
-  let filePath = path.join(
-    __dirname,
-    "..",
-    "..",
-    "..",
-    "Public",
-    "Pages",
-    "data.json"
-  );
-  res.end(fs.readFileSync(filePath, "utf-8"));
-});
+  // res.writeHead(200, { "Content-Type": "application/json" });
+  // let filePath = path.join(__dirname, "..", "..", "..", "Public", "Pages", "data.json");
+  // res.end(fs.readFileSync(filePath, "utf-8"));
+  //~ ============================= sending css response ==============================
+  // let filePath = path.join(__dirname, "..", "..", "..", "Public", "Pages", "styles.css");
+  // res.writeHead(200, { "Content-Type": "text/css" });
+  // let data = fs.createReadStream(filePath, "utf-8"); // source
+  // // destination ==> res
+  // data.pipe(res);
+}); */
 
 //? writeHead(statusCode, "statusMessage", {"Content-Type":"value"})
 // statusCode ==> in total 5 series
@@ -87,7 +85,39 @@ let server = http.createServer((req, res) => {
 //! if you want to send javascript response ==> value: "application/js"
 //! if you want to send json data ==> value: "application/json"
 
-server.listen(9000, (err) => {
+/* server.listen(9000, (err) => {
   if (err) console.log(err);
   console.log("server running at port 90000");
+}); */
+
+//~ =================================== ROUTING ========================================
+let server = http.createServer((req, res) => {
+  //? displaying html page
+  //? endpoint ==> /html
+  if (req.url === "/html") {
+    res.writeHead(200, { "content-type": "text/html" });
+    let filePath = path.join(__dirname, "..", "..", "..", "Public", "Pages", "index.html");
+    let readContents = fs.createReadStream(filePath, "utf-8");
+    readContents.pipe(res);
+  }
+  //? displaying css page
+  //? endpoint ==> /css
+  else if (req.url === "/css") {
+    let filePath = path.join(__dirname, "..", "..", "..", "Public", "Pages", "styles.css");
+    res.writeHead(200, { "content-type": "text/css" });
+    fs.createReadStream(filePath, "utf-8").pipe(res);
+  }
+  //? display lading page
+  else if (req.url === "/") {
+    res.end("<h1> landing page</h1>");
+  }
+  //? display page not found
+  else {
+    res.end("<h1>404 page not found</h1>");
+  }
+});
+
+server.listen(9000, (err) => {
+  if (err) console.log(err);
+  console.log("server running at port 9000");
 });
